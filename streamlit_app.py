@@ -28,7 +28,7 @@ if uploaded_file is not None:
 data.info()
 
 
-data['Date']=data['Event Date'].dt.strftime('%Y-%m-%d')
+data['Date']=data['Date of Event'].dt.strftime('%Y-%m-%d')
 
 
 
