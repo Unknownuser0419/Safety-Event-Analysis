@@ -17,7 +17,7 @@ if uploaded_file is not None:
   st.write(data)
 
   data['Date']=data['Date of Event'].dt.strftime('%Y-%m-%d')
-  new=data[['Date','Sub Area','Event Title','Event Description','Classification','Likelihood','HLVE','CS \ Risk Categories','Type']]
+   new=data[['Date','Sub Area','Event Title','Event Description','Classification','Likelihood','HLVE','CS \ Risk Categories','Type']]
   new['Likelihood'].fillna(new['Likelihood'].mode()[0],inplace=True)
   
   
