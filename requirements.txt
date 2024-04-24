@@ -1,0 +1,9 @@
+numpy
+pandas
+bs4
+matplotlib
+seaborn
+plotly
+re
+string
+lxml
