@@ -5,6 +5,7 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 import plotly.graph_objects as go
+import streamlit as st
 
 
 # In[2]:
