@@ -24,10 +24,6 @@ if uploaded_file is not None:
 #data=pd.read_excel("C:\\Users\\Prasad.pawar\\Documents\\Book1.xlsx")
 
 
-
-data.info()
-
-
 data['Date']=data['Date of Event'].dt.strftime('%Y-%m-%d')
 
 
