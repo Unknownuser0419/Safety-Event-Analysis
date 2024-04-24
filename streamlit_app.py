@@ -6,9 +6,6 @@ import warnings
 warnings.filterwarnings('ignore')
 import plotly.graph_objects as go
 import streamlit as st
-
-
-# In[2]:
 import re
 import string
 
@@ -19,19 +16,8 @@ if uploaded_file is not None:
   data = pd.read_excel(uploaded_file)
   st.write(data)
 
-
-
-#data=pd.read_excel("C:\\Users\\Prasad.pawar\\Documents\\Book1.xlsx")
-
-
 data['Date']=data['Date of Event'].dt.strftime('%Y-%m-%d')
-
-
-
 new=data[['Date','Sub Area','Event Title','Event Description','Classification','Likelihood','HLVE','CS \ Risk Categories','Type']]
-
-
-
 new['Likelihood'].fillna(new['Likelihood'].mode()[0],inplace=True)
 
 
