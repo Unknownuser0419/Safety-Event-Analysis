@@ -16,206 +16,206 @@ if uploaded_file is not None:
   data = pd.read_excel(uploaded_file)
   st.write(data)
 
-data['Date']=data['Date of Event'].dt.strftime('%Y-%m-%d')
-new=data[['Date','Sub Area','Event Title','Event Description','Classification','Likelihood','HLVE','CS \ Risk Categories','Type']]
-new['Likelihood'].fillna(new['Likelihood'].mode()[0],inplace=True)
-
-
-
-new['CS \\ Risk Categories'].fillna(new['CS \\ Risk Categories'].mode()[0],inplace=True)
-
-
-
-new.isna().sum()
-
-
-
-from bs4 import BeautifulSoup
-
-
-# In[12]:
-
-
-def remove_html_tags(text):
-    soup=BeautifulSoup(text,'lxml')
-    stripped_text=soup.get_text()
-    return stripped_text
-
-
-
-new['Clean_Discription']=new['Event Description'].apply(remove_html_tags)
-
-
-new['Event']=new['Event Title']
-
-
-
-new.drop(['Event Title','Event Description'],axis=1,inplace=True)
-
-
-# In[19]:
-
-
-def standardize_person_tripped(text):
-    pattern = re.compile(r'.*person.*tripped.*', re.IGNORECASE)
-    if pattern.match(text):
-        return 'Person got Tripped'
-    else:
-        return text
-
-
-# In[20]:
-
-
-def standardize_super_line_leak(text):
-    pattern = re.compile(r'.*IW.*SPUR.*LINE.*LEAK.*', re.IGNORECASE)
-    if pattern.match(text):
-        return 'Super Line Leak'
-    else:
-        return text
-
-
-# In[21]:
-
-
-def standardize_super_line_leak(text):
-    pattern = re.compile(r'.*IW.*SPUR.*LINE.*LEAK.*', re.IGNORECASE)
-    if pattern.match(text):
-        return 'Super Line Leak'
-    else:
-        return text
-
-
-# In[22]:
-
-
-def standardize_dropped_object(text):
-    if text.lower() == 'dropped object':
-        return 'Dropped Object'
-    else:
-        return text
-
-
-
-# In[24]:
-
-
-def normalize_leakage(phrase):
-    if re.search(r'24\s*(INCH)?\s*PF', phrase, re.IGNORECASE) and re.search(r'leak(age)?', phrase, re.IGNORECASE):
-        return '24 INCH PF'
-    return phrase
-
-
-# In[25]:
-
-
-def standardize_slip_and_trip(text):
-    pattern = re.compile(r'.*(slip|trip).*fall.*', re.IGNORECASE)
-    if pattern.match(text):
-        return 'Slip and Trip'
-    else:
-        return text
-
-
-# In[26]:
-
-
-def standardize_polymer_line_leaked(text):
-    pattern = re.compile(r'.*polymer.*line.*leak.*', re.IGNORECASE)
-    if pattern.match(text):
-        return 'Polymer Line Leaked'
-    else:
-        return text
-
-
-# In[27]:
-
-
-def standardize_polymer_leak_observed(text):
-    pattern = re.compile(r'.*polymer.*leak.*observed.*', re.IGNORECASE)
-    if pattern.match(text):
-        return 'Polymer Leak Observed'
-    else:
-        return text
-
-
-# In[28]:
-
-
-def standardize_slip_and_fall(text):
-    pattern = re.compile(r'slip\s*&?\s*(?:and\s*)?fall\s*(hazard[s]?|s)?', re.IGNORECASE)
-    standardized_text = pattern.sub('Slip and Fall', text)
-    return standardized_text
-
-
-# In[29]:
-
-
-def standardize_trip_hazard(text):
-    if 'trip hazard' in text.lower():
-        return 'Trip Hazard'
-    else:
-        return text
-
-
-# In[30]:
-
-
-def normalize_near_miss(phrase):
-    if re.search(r'\bnear miss\b', phrase, re.IGNORECASE):
-        return 'Near Miss'
-    return phrase
-
-
-# In[31]:
-
-
-def standardize_trip_fall(phrase):
-    if re.search(r'\btrip\b.*\bfall', phrase, re.IGNORECASE) or re.search(r'\btrip\b', phrase, re.IGNORECASE):
-        return 'Trip and Fall'
-    return phrase
-
-
-# In[32]:
-
-
-def normalize_honey_bee_incidents(phrase):
-    if re.search(r'\b(honey bee)\b', phrase, re.IGNORECASE):
-        if re.search(r'(bite|stung|attack|near miss)', phrase, re.IGNORECASE):
-            return 'Honey Bee Incident'
-    return phrase
-
-
-# In[33]:
-
-
-def normalize_honey_bee_incidents(phrase):
-    if re.search(r'\b(honey bee)\b', phrase, re.IGNORECASE):
-        if re.search(r'(bite|stung|attack|near miss)', phrase, re.IGNORECASE):
-            return 'Honey Bee Incident'
-    return phrase
-
-
-# In[34]:
-
-
-def standardize_water_leakage(text):
-    if 'water leak' in text.lower() or 'water leakage' in text.lower():
-        return 'Water Leakage'
-    elif 'injection water' in text.lower() or 'injection water line' in text.lower() or 'polymerized water injection' in text.lower():
-        return 'Water Leakage'
-    else:
-        return text
-
-
-# In[35]:
-
-
-def standardize_pipeline_leak(text):
-    if 'pipeline leak' in text.lower():
-        return 'Pipeline Leak'
-    else:
-        return text
+  data['Date']=data['Date of Event'].dt.strftime('%Y-%m-%d')
+  new=data[['Date','Sub Area','Event Title','Event Description','Classification','Likelihood','HLVE','CS \ Risk Categories','Type']]
+  new['Likelihood'].fillna(new['Likelihood'].mode()[0],inplace=True)
+  
+  
+  
+  new['CS \\ Risk Categories'].fillna(new['CS \\ Risk Categories'].mode()[0],inplace=True)
+  
+  
+  
+  new.isna().sum()
+  
+  
+  
+  from bs4 import BeautifulSoup
+  
+  
+  # In[12]:
+  
+  
+  def remove_html_tags(text):
+      soup=BeautifulSoup(text,'lxml')
+      stripped_text=soup.get_text()
+      return stripped_text
+  
+  
+  
+  new['Clean_Discription']=new['Event Description'].apply(remove_html_tags)
+  
+  
+  new['Event']=new['Event Title']
+  
+  
+  
+  new.drop(['Event Title','Event Description'],axis=1,inplace=True)
+  
+  
+  # In[19]:
+  
+  
+  def standardize_person_tripped(text):
+      pattern = re.compile(r'.*person.*tripped.*', re.IGNORECASE)
+      if pattern.match(text):
+          return 'Person got Tripped'
+      else:
+          return text
+  
+  
+  # In[20]:
+  
+  
+  def standardize_super_line_leak(text):
+      pattern = re.compile(r'.*IW.*SPUR.*LINE.*LEAK.*', re.IGNORECASE)
+      if pattern.match(text):
+          return 'Super Line Leak'
+      else:
+          return text
+  
+  
+  # In[21]:
+  
+  
+  def standardize_super_line_leak(text):
+      pattern = re.compile(r'.*IW.*SPUR.*LINE.*LEAK.*', re.IGNORECASE)
+      if pattern.match(text):
+          return 'Super Line Leak'
+      else:
+          return text
+  
+  
+  # In[22]:
+  
+  
+  def standardize_dropped_object(text):
+      if text.lower() == 'dropped object':
+          return 'Dropped Object'
+      else:
+          return text
+  
+  
+  
+  # In[24]:
+  
+  
+  def normalize_leakage(phrase):
+      if re.search(r'24\s*(INCH)?\s*PF', phrase, re.IGNORECASE) and re.search(r'leak(age)?', phrase, re.IGNORECASE):
+          return '24 INCH PF'
+      return phrase
+  
+  
+  # In[25]:
+  
+  
+  def standardize_slip_and_trip(text):
+      pattern = re.compile(r'.*(slip|trip).*fall.*', re.IGNORECASE)
+      if pattern.match(text):
+          return 'Slip and Trip'
+      else:
+          return text
+  
+  
+  # In[26]:
+  
+  
+  def standardize_polymer_line_leaked(text):
+      pattern = re.compile(r'.*polymer.*line.*leak.*', re.IGNORECASE)
+      if pattern.match(text):
+          return 'Polymer Line Leaked'
+      else:
+          return text
+  
+  
+  # In[27]:
+  
+  
+  def standardize_polymer_leak_observed(text):
+      pattern = re.compile(r'.*polymer.*leak.*observed.*', re.IGNORECASE)
+      if pattern.match(text):
+          return 'Polymer Leak Observed'
+      else:
+          return text
+  
+  
+  # In[28]:
+  
+  
+  def standardize_slip_and_fall(text):
+      pattern = re.compile(r'slip\s*&?\s*(?:and\s*)?fall\s*(hazard[s]?|s)?', re.IGNORECASE)
+      standardized_text = pattern.sub('Slip and Fall', text)
+      return standardized_text
+  
+  
+  # In[29]:
+  
+  
+  def standardize_trip_hazard(text):
+      if 'trip hazard' in text.lower():
+          return 'Trip Hazard'
+      else:
+          return text
+  
+  
+  # In[30]:
+  
+  
+  def normalize_near_miss(phrase):
+      if re.search(r'\bnear miss\b', phrase, re.IGNORECASE):
+          return 'Near Miss'
+      return phrase
+  
+  
+  # In[31]:
+  
+  
+  def standardize_trip_fall(phrase):
+      if re.search(r'\btrip\b.*\bfall', phrase, re.IGNORECASE) or re.search(r'\btrip\b', phrase, re.IGNORECASE):
+          return 'Trip and Fall'
+      return phrase
+  
+  
+  # In[32]:
+  
+  
+  def normalize_honey_bee_incidents(phrase):
+      if re.search(r'\b(honey bee)\b', phrase, re.IGNORECASE):
+          if re.search(r'(bite|stung|attack|near miss)', phrase, re.IGNORECASE):
+              return 'Honey Bee Incident'
+      return phrase
+  
+  
+  # In[33]:
+  
+  
+  def normalize_honey_bee_incidents(phrase):
+      if re.search(r'\b(honey bee)\b', phrase, re.IGNORECASE):
+          if re.search(r'(bite|stung|attack|near miss)', phrase, re.IGNORECASE):
+              return 'Honey Bee Incident'
+      return phrase
+  
+  
+  # In[34]:
+  
+  
+  def standardize_water_leakage(text):
+      if 'water leak' in text.lower() or 'water leakage' in text.lower():
+          return 'Water Leakage'
+      elif 'injection water' in text.lower() or 'injection water line' in text.lower() or 'polymerized water injection' in text.lower():
+          return 'Water Leakage'
+      else:
+          return text
+  
+  
+  # In[35]:
+  
+  
+  def standardize_pipeline_leak(text):
+      if 'pipeline leak' in text.lower():
+          return 'Pipeline Leak'
+      else:
+          return text
 
 
 # In[36]:
