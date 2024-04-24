@@ -11,11 +11,17 @@ import plotly.graph_objects as go
 import re
 import string
 
+st.title("Hello world!")
 
-# In[3]:
+uploaded_file = st.file_uploader("Choose a file")
+if uploaded_file is not None:
+  data = pd.read_csv(uploaded_file)
+  st.write(dataframe)
 
 
-data=pd.read_excel("C:\\Users\\Prasad.pawar\\Documents\\Book1.xlsx")
+
+#data=pd.read_excel("C:\\Users\\Prasad.pawar\\Documents\\Book1.xlsx")
+
 
 
 data.info()
