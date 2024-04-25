@@ -1515,18 +1515,7 @@ def miscellaneous_analysis():
         width=1000,  # Width of the plot in pixels
         height=800   # Height of the plot in pixels
     )
-
-    # Show the plot
-    st.plotly_chart(fig)
-    def set_page_config():
-        """Sets the page configuration.
-        """
-        st.set_page_config(
-            page_title="Sephora vs Ulta",
-            layout="wide",
-                )
-        set_page_config()
-        
+   
 # Define the title and sidebar layout
 st.sidebar.title('Safety Event Analysis Dashboard')
 
