@@ -1519,7 +1519,7 @@ def miscellaneous_analysis():
     # Show the plot
     st.plotly_chart(fig)
 # Set wide mode to True to remove spacing between sidebar and plot
-st.set_page_config(layout="wide")
+#st.set_page_config(layout="wide")
 
 # Define the title and sidebar layout
 st.sidebar.title('Safety Event Analysis Dashboard')
