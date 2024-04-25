@@ -5,6 +5,7 @@ import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 import plotly.graph_objects as go
+from bs4 import BeautifulSoup
 import re
 import string
 import streamlit as st
@@ -42,9 +43,6 @@ new['Likelihood'].fillna(new['Likelihood'].mode()[0],inplace=True)
 new['CS \\ Risk Categories'].fillna(new['CS \\ Risk Categories'].mode()[0],inplace=True)
 
 new.isna().sum()
-
-
-from bs4 import BeautifulSoup
 
 def remove_html_tags(text):
     soup=BeautifulSoup(text,'lxml')
