@@ -8,17 +8,18 @@ import plotly.graph_objects as go
 import re
 import string
 import streamlit as st
-from bs4 import BeautifulSoup
-import plotly.express as px
-from datetime import time
 
+st.set_page_config(
+        page_title="Safety Event Analyzer",
+        layout="wide",
+    )
 
-
-st.sidebar.title("Hello world!")
+st.sidebar.title("Hello Analyzers!")
 
 uploaded_file = st.sidebar.file_uploader("Choose a file")
 if uploaded_file is not None:
     data = pd.read_excel(uploaded_file)
+
 
 #data=pd.read_excel("C:\\Users\\Prasad.pawar\\Documents\\Book1.xlsx")
 
@@ -41,6 +42,9 @@ new['Likelihood'].fillna(new['Likelihood'].mode()[0],inplace=True)
 new['CS \\ Risk Categories'].fillna(new['CS \\ Risk Categories'].mode()[0],inplace=True)
 
 new.isna().sum()
+
+
+from bs4 import BeautifulSoup
 
 def remove_html_tags(text):
     soup=BeautifulSoup(text,'lxml')
@@ -459,6 +463,8 @@ incidents_by_weekday = incidents_by_weekday[day_order]
 total_incidents_monday = incidents_by_weekday['Monday'].sum()
 print("Total incidents on Tuesday:", total_incidents_monday)
 
+import plotly.express as px
+
 df['Date'] = pd.to_datetime(df['Date'])
 df['Day_of_Week'] = df['Date'].dt.day_name()
 incidents_by_day = df.groupby('Day_of_Week')['Incident'].sum()
@@ -501,6 +507,10 @@ print(df['Event Time'])
 df['Event Time'].fillna(df['Event Time'].mode()[0],inplace=True)
 
 df.drop('Event Date',axis=1,inplace=True)
+
+
+from datetime import time
+
 
 def assign_shift(t):
     if time(6, 0) <= t < time(14, 0):
@@ -788,6 +798,12 @@ incident_counts_df.columns = ['Incident', 'Count']
 # # Show the plot
 # fig.show()
 
+
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+
+
 # Get the value counts of incidents for the "Near Miss" type
 near_miss_counts = df['Near Miss'].value_counts()
 
@@ -816,7 +832,7 @@ near_miss_counts_df.columns = ['Near Miss', 'Count']
 
 # # Show the plot
 # fig.show()
-
+import streamlit as st
 st.set_option('deprecation.showPyplotGlobalUse', False)
 
 def monthly_analysis():
@@ -876,7 +892,7 @@ def monthly_analysis():
                                      pull=[0.1] * len(total_incidents_by_month))])
         fig.update_layout(
             title_text='Total Incidents by Month',
-            title_x=0.5,
+            title_x=0.375,
             legend_title='Month',
             legend=dict(orientation='h', x=0, y=-0.1),
             width=800,
@@ -1290,7 +1306,7 @@ def risk_categories_analysis():
     bar_fig.update_layout(
         xaxis_title='CS / Risk Categories',
         yaxis_title='Number of Incidents',
-        title_x=0.375,  # Center the title
+        title_x=0.1,  # Center the title
         plot_bgcolor='white',  # Set the background color to white for a clean look
         xaxis_tickangle=-45,  # Rotate the x-axis labels for better readability
         width=800,  # Width of the plot in pixels
@@ -1330,7 +1346,7 @@ def risk_categories_analysis():
     fig_line.update_layout(
         xaxis_title='Date',
         yaxis_title='Number of Incidents',
-        title_x=0.5,  # Center the title
+        title_x=0.375,  # Center the title
         font=dict(family='Arial', size=12, color='white'),  # Set font style and size
         width=1200,  # Width of the plot
         height=600   # Height of the plot
@@ -1515,9 +1531,9 @@ def miscellaneous_analysis():
         width=1000,  # Width of the plot in pixels
         height=800   # Height of the plot in pixels
     )
-   
-# Define the title and sidebar layout
-st.sidebar.title('Safety Event Analysis Dashboard')
+
+    # Show the line plot
+    st.plotly_chart(fig)
 
 # Add a selectbox for analysis category in the sidebar
 analysis_category = st.sidebar.selectbox('Select Analysis Category', ['Monthly Analysis', 'Weekly Analysis', 'Day wise Analysis', 'Shift Analysis', 'Top Areas Analysis', 'Bottom Areas Analysis', 'Risk Categories Analysis', 'Likelihood Analysis', 'Miscellaneous Analysis'])
