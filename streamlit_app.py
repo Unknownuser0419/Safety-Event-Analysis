@@ -20,40 +20,19 @@ st.sidebar.title("Hello Analyzers!")
 uploaded_file = st.sidebar.file_uploader("Choose a file")
 try:
         if uploaded_file is not None:
-            data = pd.read_excel(uploaded_file)
-        
-        
-        #data=pd.read_excel("C:\\Users\\Prasad.pawar\\Documents\\Book1.xlsx")
-        
-        
-        data.info()
-        
-        
+            data = pd.read_excel(uploaded_file) 
         data['Date']=data['Date of Event'].dt.strftime('%Y-%m-%d')
-        
-        
-        
         new=data[['Date','Sub Area','Event Title','Event Description','Classification','Likelihood','HLVE','CS \ Risk Categories','Type']]
-        
-        
-        
         new['Likelihood'].fillna(new['Likelihood'].mode()[0],inplace=True)
-        
-        
-        
         new['CS \\ Risk Categories'].fillna(new['CS \\ Risk Categories'].mode()[0],inplace=True)
-        
         new.isna().sum()
-        
+
         def remove_html_tags(text):
             soup=BeautifulSoup(text,'lxml')
             stripped_text=soup.get_text()
             return stripped_text
-        
         new['Clean_Discription']=new['Event Description'].apply(remove_html_tags)
-        
         new['Event']=new['Event Title']
-        
         new.drop(['Event Title','Event Description'],axis=1,inplace=True)
         
         def standardize_person_tripped(text):
@@ -77,21 +56,17 @@ try:
             else:
                 return text
         
-        
         def standardize_dropped_object(text):
             if text.lower() == 'dropped object':
                 return 'Dropped Object'
             else:
                 return text
-        
-        
+   
         def normalize_leakage(phrase):
             if re.search(r'24\s*(INCH)?\s*PF', phrase, re.IGNORECASE) and re.search(r'leak(age)?', phrase, re.IGNORECASE):
                 return '24 INCH PF'
             return phrase
-        
-        
-        
+         
         def standardize_slip_and_trip(text):
             pattern = re.compile(r'.*(slip|trip).*fall.*', re.IGNORECASE)
             if pattern.match(text):
@@ -107,8 +82,6 @@ try:
             else:
                 return text
         
-        
-        
         def standardize_polymer_leak_observed(text):
             pattern = re.compile(r'.*polymer.*leak.*observed.*', re.IGNORECASE)
             if pattern.match(text):
@@ -116,13 +89,10 @@ try:
             else:
                 return text
         
-        
         def standardize_slip_and_fall(text):
             pattern = re.compile(r'slip\s*&?\s*(?:and\s*)?fall\s*(hazard[s]?|s)?', re.IGNORECASE)
             standardized_text = pattern.sub('Slip and Fall', text)
             return standardized_text
-        
-        
         
         def standardize_trip_hazard(text):
             if 'trip hazard' in text.lower():
@@ -130,29 +100,21 @@ try:
             else:
                 return text
         
-        
-        
         def normalize_near_miss(phrase):
             if re.search(r'\bnear miss\b', phrase, re.IGNORECASE):
                 return 'Near Miss'
             return phrase
-        
-        
-        
+                
         def standardize_trip_fall(phrase):
             if re.search(r'\btrip\b.*\bfall', phrase, re.IGNORECASE) or re.search(r'\btrip\b', phrase, re.IGNORECASE):
                 return 'Trip and Fall'
             return phrase
-        
-        
         
         def normalize_honey_bee_incidents(phrase):
             if re.search(r'\b(honey bee)\b', phrase, re.IGNORECASE):
                 if re.search(r'(bite|stung|attack|near miss)', phrase, re.IGNORECASE):
                     return 'Honey Bee Incident'
             return phrase
-        
-        
         
         def normalize_honey_bee_incidents(phrase):
             if re.search(r'\b(honey bee)\b', phrase, re.IGNORECASE):
@@ -181,7 +143,6 @@ try:
             else:
                 return text
         
-        
         def standardize_lifting_operations(text):
             if 'lifting' in text.lower():
                 return 'Lifting Operations'
@@ -192,13 +153,11 @@ try:
             else:
                 return text
         
-        
         def standardize_first_aid_case(text):
             if 'first aid' in text.lower() or 'first aid case' in text.lower():
                 return 'First Aid Case'
             else:
                 return text
-        
         
         def standardize_production_fluid_line_leak(text):
             pattern = re.compile(r'.*production.*fluid.*line.*leak.*', re.IGNORECASE)
@@ -207,63 +166,30 @@ try:
             else:
                 return text
         
-        
         def standardize_possible_injury(text):
             if 'possible head injury' in text.lower():
                 return 'Possible Injury'
             else:
                 return text
         
-        
         new['Event']=new['Event'].apply(standardize_person_tripped)
-        
-        
         new['Event']=new['Event'].apply(standardize_super_line_leak)
-        
-        
         new['Event']=new['Event'].apply(standardize_production_fluid_line_leak)
-        
-        
         new['Event']=new['Event'].apply(standardize_dropped_object)
-        
-        
         new['Event']=new['Event'].apply(standardize_slip_and_fall)
-        
-        
         new['Event']=new['Event'].apply(standardize_trip_hazard)
-        
-        
         new['Event']=new['Event'].apply(standardize_trip_fall)
-        
-        
         new['Event']=new['Event'].apply(normalize_near_miss)
-        
-        
         new['Event']=new['Event'].apply(normalize_honey_bee_incidents)
-        
-        
         new['Event']=new['Event'].apply(standardize_possible_injury)
-        
-        
         new['Event']=new['Event'].apply(standardize_water_leakage)
-        
         new['Event']=new['Event'].apply(standardize_pipeline_leak)
-        
-        
         new['Event']=new['Event'].apply(standardize_underground_line_leak)
-        
-        
         new['Event']=new['Event'].apply(standardize_pipeline_leak)
-        
-        
         new['Event']=new['Event'].apply(standardize_lifting_operations)
-        
         new['Event']=new['Event'].apply(standardize_first_aid_case)
-        
         new['Event']=new['Event'].apply(standardize_slip_and_fall)
-        
         new['Event']=new['Event'].apply(standardize_pipeline_leak)
-        
         new['Event']=new['Event'].apply(standardize_underground_line_leak)
         
         
@@ -281,7 +207,6 @@ try:
         
         # For 'Incident' rows, set 'Near Miss Count' to 0
         df.loc[df['Type'] == 'Incident', 'Near Miss Count'] = 0
-        
         
         
         replace_dict = {                           
@@ -406,19 +331,13 @@ try:
         def remove_x(text):
             return text.replace('x', '')
         
-        
         df['Clean_Discription']=df['Clean_Discription'].apply(remove_x)
-        
         df.drop_duplicates(inplace=True)
-        
-        
         df.info()
         
         
         df['Date'].sort_values()
-        
         df['Date'] = pd.to_datetime(df['Date'])
-        
         df['Week_of_Year'] = df['Date'].dt.strftime('%Y-%U')
         df['Day_of_Week'] = df['Date'].dt.day_name()
         
@@ -525,102 +444,15 @@ try:
         
         shift_counts = df['Shift'].value_counts()
         
-        
-        # if isinstance(shift_counts, pd.Series):
-        #     shift_counts_df = shift_counts.reset_index()
-        #     shift_counts_df.columns = ['Shift', 'Number_of_Incidents']
-        # else:
-        #     shift_counts_df = shift_counts
-        
-        # # Create a bar chart using Plotly Express
-        # fig = px.bar(shift_counts_df, 
-        #              x='Shift', 
-        #              y='Number_of_Incidents', 
-        #              title='Number of Incidents by Shift',
-        #              labels={'Number_of_Incidents': 'Number of Incidents', 'Shift': 'Shift'},
-        #              color='Shift',  # This uses the shift column to color the bars differently
-        #              color_continuous_scale=px.colors.sequential.Viridis,  # Optional: use a color scale
-        #              template='plotly_white')  # Use a white background for a clean look
-        
-        # # Update layout for better readability
-        # fig.update_layout(
-        #     xaxis_title='Shift',
-        #     yaxis_title='Number of Incidents',
-        #     title_x=0.5,  # Center the title
-        #     plot_bgcolor='white'  # Ensure the background color is white
-        # )
-        
-        # # Show the plot
-        # fig.show()
-        
-        
         monthly_shift_counts = df.groupby(['Month', 'Shift']).size().unstack(fill_value=0)
         monthly_shift_counts = monthly_shift_counts.reset_index()
         monthly_shift_counts_melted = monthly_shift_counts.melt(id_vars='Month', var_name='Shift', value_name='Number of Incidents')
-        
-        
-        # fig = px.bar(monthly_shift_counts_melted, x='Month', y='Number of Incidents', color='Shift',
-        #              barmode='stack', labels={'Date': 'Month', 'Number of Incidents': 'Number of Incidents'},
-        #              title='Stacked Number of Incidents by Shift and Month')
-        
-        # # fig.update_layout(
-        #     title={'text': 'Stacked Number of Incidents by Shift and Month', 'font': {'size': 20}, 'x': 0.5},
-        #     xaxis_title='Month',
-        #     yaxis_title='Total Number of Incidents',
-        #     xaxis=dict(
-        #         tickmode='linear', 
-        #         tick0=0,  
-        #         dtick=1,  
-        #         tickangle=-45, 
-        #         type='category' 
-        #     ),
-        #     legend_title='Shift',
-        #     legend=dict(
-        #         orientation='v', 
-        #         x=0, 
-        #         y=1,
-        #         xanchor='left', 
-        #         bgcolor='rgba(255,255,255,0.9)'  
-        #     ),
-        #     plot_bgcolor='rgba(255, 255, 255, 0.8)',  
-        #     bargap=0.2,  
-        #     font=dict(family='Arial', size=14, color='black'),
-        #     width=1200,  
-        #     # height=650 
-        #)
-        
-        
-        # fig.show()
-        
-        # Group by 'Month' and 'Shift' and sum the incidents
         incidents_by_month_shift = df.groupby(['Month', 'Shift'])['Incident'].sum().unstack().fillna(0)
-        
-        #plt.figure(figsize=(12, 8))
-        #sns.heatmap(incidents_by_month_shift, cmap='YlOrRd', annot=True, fmt='g', linewidths=.5, linecolor='lightgrey')
-        #plt.xlabel('Shift')
-        #plt.ylabel('Month')
-        #plt.title('Incidents by Month and Shift')
-        #plt.xticks(rotation=45)
-        #plt.tight_layout()
-        #plt.show()
-        
-        
         incidents_by_day_shift = df.groupby(['Day_of_Week', 'Shift'])['Incident'].sum().unstack().fillna(0)
         
         shift1_total_incidents = incidents_by_day_shift['Shift 1 (6AM-2PM)'].sum()
         
         print("Total Incidents for Shift 1:", shift1_total_incidents)
-        
-        
-        
-        #plt.figure(figsize=(12, 8))
-        #sns.heatmap(incidents_by_day_shift, cmap='YlOrRd', annot=True, fmt='g', linewidths=.5, linecolor='lightgrey')
-        #plt.xlabel('Shift')
-        #plt.ylabel('Day of the Week')
-        #plt.title('Incidents by Day of the Week and Shift')
-        #plt.xticks(rotation=45)
-        #plt.tight_layout()
-        #plt.show()
         
         total_incidents_monday = incidents_by_weekday['Monday'].sum()
         print("Total incidents on Monday:", total_incidents_monday)
@@ -651,29 +483,6 @@ try:
         top_30_sub_areas_df = top_30_sub_areas.reset_index()
         top_30_sub_areas_df.columns = ['Sub_Area', 'Number_of_Incidents']
         
-        # Create an interactive bar chart using Plotly Express
-        # fig = px.bar(top_30_sub_areas_df, 
-        #              x='Sub_Area', 
-        #              y='Number_of_Incidents', 
-        #              title='Top 30 Sub-Areas with Highest Number of Incidents',
-        #              labels={'Sub_Area': 'Sub-Area', 'Number_of_Incidents': 'Number of Incidents'},
-        #              color='Sub_Area',  # Color bars based on Sub Area
-        #              color_continuous_scale=px.colors.sequential.Teal)  # Use a teal color scale
-        
-        # # Enhance the layout and aesthetics of the chart
-        # fig.update_layout(
-        #     xaxis_title='Sub-Area',
-        #     yaxis_title='Number of Incidents',
-        #     title_x=0.5,  # Center the title
-        #     plot_bgcolor='white',  # Set the background color to white for a clean look
-        #     xaxis_tickangle=-45,  # Rotate the x-axis labels for better readability
-        #     width=1200,  # Width of the plot in pixels
-        #     height=800   # Height of the plot in pixels
-        # )
-        
-        # # Show the plot
-        # fig.show()
-        
         incidents_by_sub_area = df.groupby('Sub Area')['Incident'].sum()
         sorted_incidents_by_sub_area = incidents_by_sub_area.sort_values(ascending=False)
         
@@ -683,28 +492,6 @@ try:
         last_30_sub_areas_df.columns = ['Sub_Area', 'Number_of_Incidents']
         last_30_sub_areas_df = last_30_sub_areas_df.sort_values(by='Number_of_Incidents', ascending=False)
         
-        # # Create an interactive bar chart using Plotly Express
-        # fig = px.bar(last_30_sub_areas_df, 
-        #              x='Sub_Area', 
-        #              y='Number_of_Incidents', 
-        #              title='Last 30 Sub-Areas with Highest Number of Incidents',
-        #              labels={'Sub_Area': 'Sub-Area', 'Number_of_Incidents': 'Number of Incidents'},
-        #              color='Sub_Area',  # Color bars based on Sub Area
-        #              color_continuous_scale=px.colors.sequential.Blues)  # Use a blue color scale
-        
-        # # Enhance the layout and aesthetics of the chart
-        # fig.update_layout(
-        #     xaxis_title='Sub-Area',
-        #     yaxis_title='Number of Incidents',
-        #     title_x=0.5,  # Center the title
-        #     plot_bgcolor='white',  # Set the background color to white for a clean look
-        #     xaxis_tickangle=-45,  # Rotate the x-axis labels for better readability
-        #     width=1200,  # Width of the plot in pixels
-        #     height=800   # Height of the plot in pixels
-        # )
-        
-        # # Show the plot
-        # fig.show()
         
         incidents_by_category = df.groupby('CS \ Risk Categories')['Incident'].sum()
         sorted_incidents_by_category = incidents_by_category.sort_values(ascending=False)
@@ -716,122 +503,26 @@ try:
         # Convert the top_20_categories Series to a DataFrame for Plotly
         top_20_categories_df = top_20_categories.reset_index()
         top_20_categories_df.columns = ['CS_Risk_Categories', 'Number_of_Incidents']
-        
-        # Create an interactive bar chart using Plotly Express
-        # fig = px.bar(top_20_categories_df, 
-        #              x='CS_Risk_Categories', 
-        #              y='Number_of_Incidents', 
-        #              title='Top 20 CS/Risk Categories with Highest Number of Incidents',
-        #              labels={'CS_Risk_Categories': 'CS / Risk Categories', 'Number_of_Incidents': 'Number of Incidents'},
-        #              color='Number_of_Incidents',  # Color bars based on the number of incidents
-        #              color_continuous_scale=px.colors.sequential.Viridis)  # Use a viridis color scale
-        
-        # # Enhance the layout and aesthetics of the chart
-        # fig.update_layout(
-        #     xaxis_title='CS / Risk Categories',
-        #     yaxis_title='Number of Incidents',
-        #     title_x=0.5,  # Center the title
-        #     plot_bgcolor='white',  # Set the background color to white for a clean look
-        #     xaxis_tickangle=-45,  # Rotate the x-axis labels for better readability
-        #     width=1000,  # Width of the plot in pixels
-        #     height=800   # Height of the plot in pixels
-        # )
-        
-        # # Show the plot
-        # fig.show()
-        
-        
+ 
         incidents_by_likelihood = df.groupby('Likelihood')['Incident'].sum()
         
         incidents_by_likelihood_df = incidents_by_likelihood.reset_index()
         incidents_by_likelihood_df.columns = ['Likelihood', 'Number_of_Incidents']
-        
-        # Create an interactive pie chart using Plotly Express with added aesthetics
-        # fig = px.pie(incidents_by_likelihood_df, 
-        #              values='Number_of_Incidents', 
-        #              names='Likelihood', 
-        #              title='Incidents by Likelihood', 
-        #              color_discrete_sequence=px.colors.qualitative.Pastel,  # Using a more vibrant color sequence
-        #              hole=0.3)  # Creates a donut chart
-        
-        # # Enhance the layout and aesthetics of the chart
-        # fig.update_traces(textposition='inside', textinfo='percent+label', hoverinfo='label+percent', marker=dict(line=dict(color='white', width=2)))
-        # fig.update_layout(
-        #     title_x=0.5,  # Center the title for consistency
-        #     legend_title_text='Likelihood',  # Provide a title for the legend for better understanding
-        #     legend=dict(orientation="h", yanchor="bottom", y=0.01, xanchor="right", x=1),  # Positioning the legend horizontally at the bottom
-        #     width=800,  # Increase width of the plot
-        #     height=800   # Increase height of the plot
-        # )
-        
-        # # Show the plot
-        # fig.show()
         
         # Get the value counts of incidents
         incident_counts = df['Incident'].value_counts()
         
         # Create a DataFrame for Plotly
         incident_counts_df = incident_counts.reset_index()
-        incident_counts_df.columns = ['Incident', 'Count']
-        
-        # Create an interactive bar chart using Plotly Express
-        # fig = px.bar(incident_counts_df, 
-        #              x='Incident', 
-        #              y='Count', 
-        #              title='Distribution of Incidents',
-        #              labels={'Incident': 'Incident Type', 'Count': 'Number of Incidents'},
-        #              color='Incident',  # Color bars based on incident type
-        #              color_discrete_sequence=px.colors.qualitative.Pastel)  # Using a pastel color palette
-        
-        # # Enhance the layout and aesthetics of the chart
-        # fig.update_layout(
-        #     xaxis_title='Incident Type',
-        #     yaxis_title='Number of Incidents',
-        #     title_x=0.5,  # Center the title
-        #     plot_bgcolor='white',  # Set the background color to white for a clean look
-        #     xaxis_tickangle=-45,  # Rotate the x-axis labels for better readability
-        #     width=1000,  # Width of the plot in pixels
-        #     height=600   # Height of the plot in pixels
-        # )
-        
-        # # Show the plot
-        # fig.show()
-        
-        
-        import streamlit as st
-        import pandas as pd
-        import plotly.express as px
-        
-        
+        incident_counts_df.columns = ['Incident', 'Count'] 
+    
         # Get the value counts of incidents for the "Near Miss" type
         near_miss_counts = df['Near Miss'].value_counts()
         
         # Create a DataFrame for Plotly
         near_miss_counts_df = near_miss_counts.reset_index()
         near_miss_counts_df.columns = ['Near Miss', 'Count']
-        
-        # Create an interactive bar chart using Plotly Express
-        # fig = px.bar(near_miss_counts_df, 
-        #              x='Near Miss', 
-        #              y='Count', 
-        #              title='Distribution of Near Miss Incidents',
-        #              labels={'Near Miss': 'Near Miss Type', 'Count': 'Number of Incidents'},
-        #              color='Near Miss',  # Color bars based on incident type
-        #              color_discrete_sequence=px.colors.qualitative.Pastel)  # Using a pastel color palette
-        
-        # # Enhance the layout and aesthetics of the chart
-        # fig.update_layout(
-        #     xaxis_title='Near Miss Type',
-        #     yaxis_title='Number of Incidents',
-        #     title_x=0.5,  # Center the title
-        #     plot_bgcolor='white',  # Set the background color to white for a clean look
-        #     width=800,  # Width of the plot in pixels
-        #     height=600   # Height of the plot in pixels
-        # )
-        
-        # # Show the plot
-        # fig.show()
-        import streamlit as st
+ 
         st.set_option('deprecation.showPyplotGlobalUse', False)
         
         def monthly_analysis():
